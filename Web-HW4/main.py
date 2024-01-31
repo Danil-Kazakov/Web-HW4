@@ -73,10 +73,20 @@ def save_data_from_form(data):
     try:
         parse_dict = {key: value for key, value in [el.split('=') for el in parse_data.split('&')]}
         parse_dict["timestamp"] = str(datetime.now())
-        with open('storage/data.json', 'r', encoding='utf-8') as file:
+        
+        data_file_path = 'storage/data.json'
+        
+        # Перевіряємо, чи існує файл
+        if not Path(data_file_path).exists():
+            with open(data_file_path, 'w', encoding='utf-8') as file:
+                json.dump({}, file)
+        
+        with open(data_file_path, 'r', encoding='utf-8') as file:
             all_data = json.load(file)
+            
         all_data[parse_dict["timestamp"]] = parse_dict
-        with open('storage/data.json', 'w', encoding='utf-8') as file:
+        
+        with open(data_file_path, 'w', encoding='utf-8') as file:
             json.dump(all_data, file, ensure_ascii=False, indent=4)
     except ValueError as err:
         logging.error(err)
